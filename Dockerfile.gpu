@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-devel-centos7
+FROM nvidia/cuda:9.0-devel-centos7
 
 ENV DEVTOOLSET_URL_ROOT http://vault.centos.org/7.6.1810/sclo/x86_64/rh/devtoolset-4/
 
