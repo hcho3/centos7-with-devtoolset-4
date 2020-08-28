@@ -1,0 +1,29 @@
+FROM centos:7
+
+ENV DEVTOOLSET_URL_ROOT http://vault.centos.org/7.6.1810/sclo/x86_64/rh/devtoolset-4/
+
+# Install all basic requirements
+RUN \
+    yum -y update && \
+    yum install -y tar unzip wget xz git centos-release-scl yum-utils make && \
+    yum install -y $DEVTOOLSET_URL_ROOT/devtoolset-4-gcc-5.3.1-6.1.el7.x86_64.rpm \
+                   $DEVTOOLSET_URL_ROOT/devtoolset-4-gcc-c++-5.3.1-6.1.el7.x86_64.rpm \
+                   $DEVTOOLSET_URL_ROOT/devtoolset-4-binutils-2.25.1-10.el7.x86_64.rpm \
+                   $DEVTOOLSET_URL_ROOT/devtoolset-4-runtime-4.1-3.sc1.el7.x86_64.rpm \
+                   $DEVTOOLSET_URL_ROOT/devtoolset-4-libstdc++-devel-5.3.1-6.1.el7.x86_64.rpm && \
+    # CMake
+    wget -nv -nc https://cmake.org/files/v3.13/cmake-3.13.0-Linux-x86_64.sh --no-check-certificate && \
+    bash cmake-3.13.0-Linux-x86_64.sh --skip-license --prefix=/usr
+
+ENV PATH=/opt/python/bin:/opt/maven/bin:$PATH
+ENV CC=/opt/rh/devtoolset-4/root/usr/bin/gcc
+ENV CXX=/opt/rh/devtoolset-4/root/usr/bin/c++
+ENV CPP=/opt/rh/devtoolset-4/root/usr/bin/cpp
+
+ENV GOSU_VERSION 1.10
+
+# Install lightweight sudo (not bound to TTY)
+RUN set -ex; \
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" && \
+    chmod +x /usr/local/bin/gosu && \
+    gosu nobody true
